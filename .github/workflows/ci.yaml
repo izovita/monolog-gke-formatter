@@ -56,6 +56,5 @@ jobs:
                   key: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.composer }}-composer-${{ hashFiles('composer.json') }}
                   restore-keys: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.composer }}-composer
 
-
             - name: Install dependencies
             - run: composer require monolog/monolog:${{ matrix.monolog }} && composer update ${{ matrix.composer }}
