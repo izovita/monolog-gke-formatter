@@ -21,6 +21,14 @@ jobs:
                 composer:
                     - ''
                     - '--prefer-lowest'
+                monolog: ['default']
+                include:
+                  - php: '8.1'
+                    composer: ''
+                    monolog: '3.0'
+                  - php: '8.2'
+                    composer: ''
+                    monolog: '3.0'
 
         name: PHP ${{ matrix.php }} ${{ matrix.composer }}
         steps:
@@ -49,4 +57,8 @@ jobs:
                   restore-keys: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.composer }}-composer
 
             - name: Install dependencies
-              run: composer update ${{ matrix.composer }}
+              run: |
+                if [ "${{ matrix.monolog }}" != "default" ]; then
+                  composer require monolog/monolog:${{ matrix.monolog }}
+                fi
+                composer update ${{ matrix.composer }}
