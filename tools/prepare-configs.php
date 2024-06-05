@@ -9,13 +9,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 const MONOLOG_VERSION_21 = '^2.1';
 const MONOLOG_VERSION_30 = '^3.0';
 
-$monologVersion = class_exists('Monolog\LogRecord') ?
-    MONOLOG_VERSION_30 : MONOLOG_VERSION_21;
+$monologVersion = class_exists('Monolog\LogRecord') ? MONOLOG_VERSION_30 : MONOLOG_VERSION_21;
 
 if (MONOLOG_VERSION_30 === $monologVersion) {
-    $skipPath = __DIR__ . '/../src/GkeFormatterMonolog30.php';
-} else {
     $skipPath = __DIR__ . '/../src/GkeFormatter.php';
+} else {
+    $skipPath = __DIR__ . '/../src/GkeFormatterMonolog30.php.php';
 }
 
 $neonFile = __DIR__ . '/../phpstan.neon';
