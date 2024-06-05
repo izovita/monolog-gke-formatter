@@ -9,10 +9,9 @@ use Monolog\LogRecord;
 class GkeFormatterMonolog30 extends JsonFormatter
 {
     protected const BACKTRACE_DEFAULT_CALL = 6;
-
-    protected $deepToBacktrace;
-    protected $httpRequestContext;
-    protected $sourceLocationContext;
+    protected int $deepToBacktrace;
+    protected bool $httpRequestContext;
+    protected bool $sourceLocationContext;
 
     public function __construct(
         int  $batchMode = self::BATCH_MODE_JSON,
@@ -39,26 +38,26 @@ class GkeFormatterMonolog30 extends JsonFormatter
         $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $this->deepToBacktrace);
 
         $normalized = $this->normalize(array_merge(
-                $record->extra,
-                $this->sourceLocationContext && isset($debug[$this->deepToBacktrace - 2])
-                    ? [
-                    'sourceLocation' => [
-                        'file' => $debug[$this->deepToBacktrace - 2]['file'],
-                        'line' => $debug[$this->deepToBacktrace - 2]['line'],
-                        'function' => $this->getFunction($debug),
-                    ]
+            $record->extra,
+            $this->sourceLocationContext && isset($debug[$this->deepToBacktrace - 2])
+                ? [
+                'sourceLocation' => [
+                    'file' => $debug[$this->deepToBacktrace - 2]['file'],
+                    'line' => $debug[$this->deepToBacktrace - 2]['line'],
+                    'function' => $this->getFunction($debug),
                 ]
-                    : [],
-                $this->httpRequestContext && false !== strpos(PHP_SAPI, "cgi")
-                    ? $this->createRequestContext()
-                    : [],
-                [
-                    'message' => $record->message,
-                    'thread' => $record->channel,
-                    'severity' => $record->level->getName(),
-                    'serviceContext' => $record->context,
-                    'timestamp' => $record->datetime->getTimestamp(),
-                ]
+            ]
+                : [],
+            $this->httpRequestContext && false !== strpos(PHP_SAPI, "cgi")
+                ? $this->createRequestContext()
+                : [],
+            [
+                'message' => $record->message,
+                'thread' => $record->channel,
+                'severity' => $record->level->getName(),
+                'serviceContext' => $record->context,
+                'timestamp' => $record->datetime->getTimestamp(),
+            ]
         ));
 
         return $this->toJson($normalized, true) . ($this->appendNewline ? "\n" : '');
